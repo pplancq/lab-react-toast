@@ -24,13 +24,19 @@ export class ToastService extends AbstractObserver {
   addToast(toast: string, duration?: number) {
     this.currentId += 1;
 
+    const durationToUse = duration || this.defaultDuration;
+
     this.toast.set(this.currentId, {
       id: this.currentId,
       message: toast,
-      duration: duration || this.defaultDuration,
+      duration: durationToUse,
     });
 
     this.cachedAllToastIds = Array.from(this.toast.keys());
+
+    setTimeout(() => {
+      this.removeToast(this.currentId);
+    }, durationToUse);
 
     this.notifyObservers();
   }

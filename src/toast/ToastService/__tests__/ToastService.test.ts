@@ -1,5 +1,14 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ToastService } from '../ToastService';
+
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+  vi.clearAllTimers();
+});
 
 describe('ToastService', () => {
   it('should return empty array on initialization for getAllToastIds', () => {
@@ -84,5 +93,23 @@ describe('ToastService', () => {
     expect(observer2).toHaveBeenCalledTimes(1);
 
     unsubscribe2();
+  });
+
+  it('should notify subscribers on automatic removal', () => {
+    const storeAuto = new ToastService();
+    const observerAuto = vi.fn();
+    const unsubscribeAuto = storeAuto.subscribe(observerAuto);
+
+    storeAuto.addToast('Auto');
+    expect(observerAuto).toHaveBeenCalledTimes(1); // add
+
+    vi.advanceTimersByTime(3000);
+    expect(observerAuto).toHaveBeenCalledTimes(2); // removal after timeout
+
+    // verify the toast was actually removed
+    expect(storeAuto.getToastById(1)).toBeUndefined();
+    expect(storeAuto.getAllToastIds()).toStrictEqual([]);
+
+    unsubscribeAuto();
   });
 });
