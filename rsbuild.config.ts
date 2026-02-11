@@ -67,6 +67,9 @@ export default defineConfig(({ env }) => {
     },
     html: {
       template: './index.html',
+      templateParameters: {
+        publicPath,
+      },
     },
   };
 });
