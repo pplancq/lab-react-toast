@@ -1,7 +1,7 @@
 export type VoidFunction = () => void;
 
 export abstract class AbstractObserver {
-  private observers: Set<VoidFunction> = new Set();
+  private readonly observers: Set<VoidFunction> = new Set();
 
   subscribe(observer: VoidFunction): VoidFunction {
     this.observers.add(observer);
