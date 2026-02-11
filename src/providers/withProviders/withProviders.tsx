@@ -12,7 +12,7 @@ export const withProvider = <P extends object>(Component: ComponentType<P>) => {
     <QueryClientProvider client={queryClient}>
       <ToastProvider defaultDuration={defaultToastDuration}>
         <Component {...(props as P)} />
-      </ToastProvider>{' '}
+      </ToastProvider>
     </QueryClientProvider>
   );
 

@@ -15,6 +15,8 @@ const ToastComponent = ({ id }: ToastProps) => {
   const toast = useToastSelector(t => t.getToastById(id));
   const toastService = useToastService();
 
+  console.info('Render toast id : ', id);
+
   if (!toast) {
     return null;
   }
