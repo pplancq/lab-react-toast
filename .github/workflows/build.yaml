@@ -1,0 +1,149 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+env:
+  HUSKY: 0
+
+jobs:
+  install:
+    name: Install package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup Node
+        uses: pplancq/actions/setup-node@v1.0.0
+        with:
+          use-mise: 'true'
+
+      - name: Check package-lock.json
+        run: npm run package:check
+
+      - name: Install package
+        run: npm ci
+
+  commitlint:
+    if: github.event_name == 'pull_request'
+    name: CommitLint
+    needs:
+      - install
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: pplancq/actions/setup-node@v1.0.0
+        with:
+          use-mise: 'true'
+
+      # https://commitlint.js.org/guides/ci-setup.html#github-actions
+      - name: Validate PR commits with commitlint
+        run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose --color
+
+  lint:
+    name: Lint code
+    needs:
+      - install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup Node
+        uses: pplancq/actions/setup-node@v1.0.0
+        with:
+          use-mise: 'true'
+
+      - name: Run lint
+        run: npm run lint
+
+  test:
+    name: Test code
+    needs:
+      - install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup Node
+        uses: pplancq/actions/setup-node@v1.0.0
+        with:
+          use-mise: 'true'
+
+      - name: Run tests
+        run: npm run test
+
+  build:
+    name: Build
+    needs:
+      - install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup Node
+        uses: pplancq/actions/setup-node@v1.0.0
+        with:
+          use-mise: 'true'
+
+      - name: Run build
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: build
+          path: build/
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs:
+      - lint
+      - test
+      - build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: 'pages'
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Download artifact
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: build
+          path: build/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: 'build/'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
