@@ -8,14 +8,12 @@ import '@pplancq/shelter-ui-css/css/components/button.css';
 import '@pplancq/shelter-ui-css/css/components/icon.css';
 
 export type ToastProps = {
-  id: number;
+  id: string;
 };
 
 const ToastComponent = ({ id }: ToastProps) => {
   const toast = useToastSelector(t => t.getToastById(id));
   const toastService = useToastService();
-
-  console.info('Render toast id : ', id);
 
   if (!toast) {
     return null;
