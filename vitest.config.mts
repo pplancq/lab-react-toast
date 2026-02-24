@@ -17,6 +17,9 @@ export default defineConfig(({ mode }) => {
       }),
       svgr(),
     ],
+    ssr: {
+      noExternal: ['@pplancq/shelter-ui-icon', '@pplancq/shelter-ui-react'],
+    },
     envPrefix: env.ENV_PREFIX ?? 'FRONT_',
     test: {
       globals: true,
