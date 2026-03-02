@@ -4,7 +4,7 @@
   "license": "MIT",
   "description": "lab-react-toast",
   "type": "module",
-  "packageManager": "npm@11.9.0",
+  "packageManager": "npm@11.11.0",
   "homepage": "https://pplancq.github.io/lab-react-toast",
   "scripts": {
     "start": "rsbuild dev",
