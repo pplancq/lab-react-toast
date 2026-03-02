@@ -1,5 +1,8 @@
 import { Toast } from '@Front/toast/Toast/Toast';
 import { useToastSelector } from '@Front/toast/useToastSelector/useToastSelector';
+import { memo } from 'react';
+
+const ToastMemo = memo(Toast);
 
 export const ToastContainer = () => {
   const toastIds = useToastSelector(toast => toast.getAllToastIds());
@@ -23,9 +26,9 @@ export const ToastContainer = () => {
         width: 500,
       }}
     >
-      {toastIds.map(id => {
-        return <Toast id={id} key={id} />;
-      })}
+      {toastIds.map(id => (
+        <ToastMemo id={id} key={id} />
+      ))}
     </section>
   );
 };
