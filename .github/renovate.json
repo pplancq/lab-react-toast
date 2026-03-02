@@ -1,13 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>pplancq/renovate-config"],
-  "regexManagers": [
-    {
-      "fileMatch": ["^mise\\.toml$"],
-      "matchStrings": ["npm\\s*=\\s*\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""],
-      "datasourceTemplate": "npm",
-      "depNameTemplate": "npm",
-      "versioningTemplate": "semver"
-    }
-  ]
+  "extends": ["github>pplancq/renovate-config"]
 }
