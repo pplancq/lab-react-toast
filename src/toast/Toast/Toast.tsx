@@ -19,7 +19,11 @@ const ToastComponent = ({ id }: ToastProps) => {
     return null;
   }
 
-  return <Alert title={toast.message} onClose={() => toastService.removeToast(id)} />;
+  const onClose = () => {
+    toastService.removeToast(id);
+  };
+
+  return <Alert title={toast.message} onClose={onClose} />;
 };
 
 export const Toast = memo(ToastComponent);
