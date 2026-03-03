@@ -2,12 +2,12 @@ import { useToastService } from '@Front/toast/useToast/useToastService';
 import { useToastSelector } from '@Front/toast/useToastSelector/useToastSelector';
 import { Alert } from '@pplancq/shelter-ui-react';
 
+import '@pplancq/shelter-ui-css/css/components/alert.css';
 import '@pplancq/shelter-ui-css/css/components/button.css';
 import '@pplancq/shelter-ui-css/css/components/icon.css';
-import '@pplancq/shelter-ui-css/css/components/alert.css';
 
 export type ToastProps = {
-  id: number;
+  id: string;
 };
 
 export const Toast = ({ id }: ToastProps) => {
@@ -18,5 +18,9 @@ export const Toast = ({ id }: ToastProps) => {
     return null;
   }
 
-  return <Alert title={toast.message} onClose={() => toastService.removeToast(id)} />;
+  const onClose = () => {
+    toastService.removeToast(id);
+  };
+
+  return <Alert title={toast.message} onClose={onClose} />;
 };
